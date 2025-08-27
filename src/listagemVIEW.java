@@ -1,6 +1,8 @@
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -204,11 +206,26 @@ public class listagemVIEW extends javax.swing.JFrame {
     private void listarProdutos(){
         try {
             ProdutosDAO produtosdao = new ProdutosDAO();
+            produtosdao.conectar();
+            
+            List<ProdutosDTO> listagem = produtosdao.listarProdutos();
             
             DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
             model.setNumRows(0);
+            model.setRowCount(0);
             
-            ArrayList<ProdutosDTO> listagem = produtosdao.listarProdutos();
+            listaProdutos.setRowSorter(new TableRowSorter(model));
+            
+            for (ProdutosDTO c : listagem) {
+                Object[] obj = new Object[]{
+                    c.getId(),
+                    c.getNome(),
+                    c.getValor(),
+                    c.getStatus()
+                
+                };
+                model.addRow(obj);
+            }
             
             for(int i = 0; i < listagem.size(); i++){
                 model.addRow(new Object[]{
@@ -217,7 +234,9 @@ public class listagemVIEW extends javax.swing.JFrame {
                     listagem.get(i).getValor(),
                     listagem.get(i).getStatus()
                 });
+                
             }
+            produtosdao.desconectar();
         } catch (Exception e) {
         }
     

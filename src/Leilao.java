@@ -10,7 +10,7 @@
 public class Leilao {
      public static void main(String[] args) {
         cadastroVIEW tV = new cadastroVIEW ();
-        tV.setTitle("Tela de Login");
+        tV.setTitle("Tela de Cadastro");
         tV.setLocationRelativeTo(null);
         tV.pack();
         tV.setVisible(true);

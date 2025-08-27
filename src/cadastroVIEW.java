@@ -171,8 +171,8 @@ public class cadastroVIEW extends javax.swing.JFrame {
                     if (resposta == 1) {
                         JOptionPane.showMessageDialog(null, "Os seguintes dados foram cadastrados com sucesso: \n"
                                 + "\nNome: " + cadastroNome.getText()
-                                + "\nCNPJ: " + cadastroValor.getText()
-                                + "\nData: " + status
+                                + "\nValor: " + cadastroValor.getText()
+                                + "\nStatus: " + status
                         );
 
                         cadastroNome.setText("");
@@ -193,8 +193,11 @@ public class cadastroVIEW extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutosActionPerformed
-        listagemVIEW listagem = new listagemVIEW(); 
-        listagem.setVisible(true);
+        listagemVIEW lV = new listagemVIEW(); 
+        lV.setTitle("Tela de Listagem");
+        lV.setLocationRelativeTo(null);
+        lV.pack();
+        lV.setVisible(true);
     }//GEN-LAST:event_btnProdutosActionPerformed
 
     /**
@@ -256,8 +259,8 @@ public class cadastroVIEW extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, "ATENÇÃO! Nome não pode ser vazio.");
     }
     
-     else if (valor.isEmpty() || !valor.matches("\\d+(\\.\\d{1,2})?")) {
-        JOptionPane.showMessageDialog(null, "ATENÇÃO! Valor não pode ser vazio e deve ser um número válido (ex: 10 ou 10.50).");
+     else if (valor.isEmpty() || !valor.matches("\\d+")) {
+        JOptionPane.showMessageDialog(null, "ATENÇÃO! Valor não pode ser vazio e deve ser um número válido sem virgula (ex: 10 ).");
     }
     
     else {
