@@ -1,3 +1,6 @@
+
+import javax.swing.JOptionPane;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -140,17 +143,53 @@ public class cadastroVIEW extends javax.swing.JFrame {
     }//GEN-LAST:event_cadastroNomeActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        ProdutosDTO produto = new ProdutosDTO();
-        String nome = cadastroNome.getText();
-        String valor = cadastroValor.getText();
-        String status = "A Venda";
-        produto.setNome(nome);
-        produto.setValor(Integer.parseInt(valor));
-        produto.setStatus(status);
         
-        ProdutosDAO produtodao = new ProdutosDAO();
-        produtodao.cadastrarProduto(produto);
-        
+        try {
+
+            if (emptyFields()) {
+
+            }else{
+                
+            
+            ProdutosDTO produto = new ProdutosDTO();
+            ProdutosDAO produtoDao = new ProdutosDAO();
+              
+            
+            String nome = cadastroNome.getText();
+            String valor = cadastroValor.getText();
+            String status = "A Venda";
+            produto.setNome(nome);
+            produto.setValor(Integer.parseInt(valor));
+            produto.setStatus(status);
+
+            if (!produtoDao.conectar()) {
+                    JOptionPane.showMessageDialog(null, "Erro de conexão");
+                    
+                } else {
+                    int resposta =  produtoDao.cadastrarProduto(produto);;
+
+                    if (resposta == 1) {
+                        JOptionPane.showMessageDialog(null, "Os seguintes dados foram cadastrados com sucesso: \n"
+                                + "\nNome: " + cadastroNome.getText()
+                                + "\nCNPJ: " + cadastroValor.getText()
+                                + "\nData: " + status
+                        );
+
+                        cadastroNome.setText("");
+                        cadastroValor.setText("");
+                        
+
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Erro ao tentar inserir dados");
+                    }
+                    produtoDao.desconectar();
+                }
+            
+           
+            }
+        } catch (Exception e) {
+
+        }
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutosActionPerformed
@@ -205,4 +244,27 @@ public class cadastroVIEW extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
+
+ private boolean emptyFields() {
+    boolean empty = true;
+    String nome = cadastroNome.getText().trim();
+    String valor = cadastroValor.getText().trim();
+    
+
+   
+    if (nome.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "ATENÇÃO! Nome não pode ser vazio.");
+    }
+    
+     else if (valor.isEmpty() || !valor.matches("\\d+(\\.\\d{1,2})?")) {
+        JOptionPane.showMessageDialog(null, "ATENÇÃO! Valor não pode ser vazio e deve ser um número válido (ex: 10 ou 10.50).");
+    }
+    
+    else {
+        empty = false; 
+    }
+
+    return empty;
+}
+
 }
