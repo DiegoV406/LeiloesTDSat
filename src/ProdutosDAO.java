@@ -120,5 +120,34 @@ public class ProdutosDAO {
     }
 }
     
+    public List<ProdutosDTO> listarPorStatus(){
+        String sql = "SELECT * FROM produtos WHERE status = \"Vendido\" ";
+
+        try {
+            PreparedStatement stmt = this.conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            List<ProdutosDTO> listaProduto = new ArrayList<>();
+
+            while (rs.next()) {
+                ProdutosDTO produto = new ProdutosDTO();
+                
+                produto.setId(rs.getInt("id"));
+                produto.setNome(rs.getString("nome"));
+                produto.setValor(rs.getInt("valor"));
+                produto.setStatus(rs.getString("status"));
+
+                listaProduto.add(produto);
+            }
+            return listaProduto;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao tentar listar os produtos");
+            return new ArrayList<>();
+        }
+        
+    }
+    
 }
 
