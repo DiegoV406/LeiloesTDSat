@@ -97,6 +97,28 @@ public class ProdutosDAO {
 
         }
     }
-        
+      
+    public void venderProduto(int idProduto, String novoStatus) {
+    try {
+        PreparedStatement stmt = conn.prepareStatement(
+            "UPDATE produtos SET status = ? WHERE id = ?"
+        );
+        stmt.setString(1, novoStatus);
+        stmt.setInt(2, idProduto);
+
+        int linhasAfetadas = stmt.executeUpdate();
+        stmt.close();
+
+        if (linhasAfetadas == 0) {
+            JOptionPane.showMessageDialog(null, 
+                "Nenhum produto foi atualizado. Verifique o ID informado.");
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Erro ao atualizar estoque: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+    
 }
 
