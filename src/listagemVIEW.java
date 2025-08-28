@@ -1,6 +1,7 @@
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -138,17 +139,57 @@ public class listagemVIEW extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
-        String id = id_produto_venda.getText();
-        
-        ProdutosDAO produtosdao = new ProdutosDAO();
-        
-        //produtosdao.venderProduto(Integer.parseInt(id));
-        listarProdutos();
+        try {
+            if (emptyFields()) {
+                return;
+            }
+
+            String id = id_produto_venda.getText();
+
+            ProdutosDAO produtosdao = new ProdutosDAO();
+            produtosdao.conectar();
+
+            List<ProdutosDTO> listaBanco = produtosdao.listarProdutos();
+            boolean encontrado = false;
+
+            for (ProdutosDTO produto : listaBanco) {
+                if (produto.getId().equals(Integer.parseInt(id))) {
+                    encontrado = true;
+
+                    if (produto.getStatus().equalsIgnoreCase("Vendido")) {
+                        JOptionPane.showMessageDialog(null,
+                                "Estoque insuficiente para o produto: " + produto.getNome());
+                        produtosdao.desconectar();
+                        return;
+                    }
+
+                    // Atualiza status para "Vendido"
+                    produtosdao.venderProduto(produto.getId(), "Vendido");
+                    JOptionPane.showMessageDialog(null,
+                            "Produto " + produto.getNome() + " vendido com sucesso!");
+                    break;
+                }
+            }
+
+            if (!encontrado) {
+                JOptionPane.showMessageDialog(null, "Produto não encontrado no banco de dados!");
+            }
+
+            listarProdutos(); // atualiza tabela na tela
+            produtosdao.desconectar();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao vender produto: " + e.getMessage());
+            e.printStackTrace(); // IMPORTANTE para debug
+        }
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
-        //vendasVIEW vendas = new vendasVIEW(); 
-        //vendas.setVisible(true);
+        vendasVIEW vD = new vendasVIEW(); 
+        vD.setTitle("Tela de Listagem");
+        vD.setLocationRelativeTo(null);
+        vD.pack();
+        vD.setVisible(true);
     }//GEN-LAST:event_btnVendasActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
@@ -231,4 +272,20 @@ public class listagemVIEW extends javax.swing.JFrame {
         }
     
     }
+   
+    private boolean emptyFields() {
+        boolean empty = true;
+        String id = id_produto_venda.getText().trim();
+
+        if (id.isEmpty() || !id.matches("\\d+")) {
+            JOptionPane.showMessageDialog(null, "ATENÇÃO! Id não pode ser vazio e deve ser um número válido sem virgula (ex: 10 ).");
+        } else {
+            empty = false;
+        }
+
+        return empty;
+    }
+
 }
+    
+

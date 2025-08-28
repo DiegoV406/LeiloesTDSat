@@ -97,6 +97,57 @@ public class ProdutosDAO {
 
         }
     }
+      
+    public void venderProduto(int idProduto, String novoStatus) {
+    try {
+        PreparedStatement stmt = conn.prepareStatement(
+            "UPDATE produtos SET status = ? WHERE id = ?"
+        );
+        stmt.setString(1, novoStatus);
+        stmt.setInt(2, idProduto);
+
+        int linhasAfetadas = stmt.executeUpdate();
+        stmt.close();
+
+        if (linhasAfetadas == 0) {
+            JOptionPane.showMessageDialog(null, 
+                "Nenhum produto foi atualizado. Verifique o ID informado.");
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Erro ao atualizar estoque: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+    
+    public List<ProdutosDTO> listarPorStatus(){
+        String sql = "SELECT * FROM produtos WHERE status = \"Vendido\" ";
+
+        try {
+            PreparedStatement stmt = this.conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            List<ProdutosDTO> listaProduto = new ArrayList<>();
+
+            while (rs.next()) {
+                ProdutosDTO produto = new ProdutosDTO();
+                
+                produto.setId(rs.getInt("id"));
+                produto.setNome(rs.getString("nome"));
+                produto.setValor(rs.getInt("valor"));
+                produto.setStatus(rs.getString("status"));
+
+                listaProduto.add(produto);
+            }
+            return listaProduto;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao tentar listar os produtos");
+            return new ArrayList<>();
+        }
         
+    }
+    
 }
 
